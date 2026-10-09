@@ -24,7 +24,7 @@ import {
   closeSurface,
   shellEscape,
   readScreen,
-} from "./tmux.ts";
+} from "./mux.ts";
 
 import {
   countSessionEntryLines,

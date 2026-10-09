@@ -1,8 +1,8 @@
 # pi-interactive-subagents
 
-Async subagents for [pi](https://github.com/badlogic/pi-mono), running in tmux panes. Spawn a sub-agent, keep working in the main session, and get the result steered back when it finishes. Fully non-blocking.
+Async subagents for [pi](https://github.com/badlogic/pi-mono), running in terminal-multiplexer panes. Spawn a sub-agent, keep working in the main session, and get the result steered back when it finishes. Fully non-blocking.
 
-**tmux-only fork.** See [Acknowledgements](#acknowledgements) for the upstream project, which also supports cmux, zellij, and WezTerm.
+This fork supports **tmux and WezTerm**. It automatically selects WezTerm when Pi was started inside WezTerm (`WEZTERM_UNIX_SOCKET` is set); set `PI_SUBAGENT_MUX=wezterm` to force that backend.
 
 ## How it works
 
@@ -178,10 +178,31 @@ Status display is configured via `config.json` in the extension directory (copy 
 ## Requirements
 
 - [pi](https://github.com/badlogic/pi-mono)
-- [tmux](https://github.com/tmux/tmux)
+- Either [tmux](https://github.com/tmux/tmux) or [WezTerm](https://wezfurlong.org/wezterm/)
+
+### tmux
 
 ```bash
 tmux new -A -s pi 'pi'
+```
+
+### WezTerm
+
+Run `pi` directly from a WezTerm pane. The extension uses `wezterm cli` to create a split, type the child command, inspect its completion sentinel, and close the child pane before steering its result back to the orchestrator.
+
+Pi uses Kitty keyboard reporting. Add this to `~/.config/wezterm/wezterm.lua` on Windows (Git Bash) and `~/.wezterm.lua` on macOS, then fully quit and relaunch WezTerm:
+
+```lua
+local wezterm = require "wezterm"
+local config = wezterm.config_builder()
+config.enable_kitty_keyboard = true
+return config
+```
+
+If more than one mux is present, force the intended backend in your shell startup file:
+
+```bash
+export PI_SUBAGENT_MUX=wezterm
 ```
 
 ## Acknowledgements
